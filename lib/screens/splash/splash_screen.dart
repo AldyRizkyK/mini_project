@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mini_project/screens/home/home_screen.dart';
-import 'package:mini_project/screens/plant/add_plant_screen.dart';
-import 'package:mini_project/screens/plant/home_page.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class SplashScreens extends StatefulWidget {
   const SplashScreens({super.key});
@@ -12,11 +11,13 @@ class SplashScreens extends StatefulWidget {
 }
 
 class _SplashScreensState extends State<SplashScreens> {
+    FirebaseFirestore firestoreRef = FirebaseFirestore.instance;
+    String collectionName = "Image";
   @override
   void initState() {
     Future.delayed(const Duration(seconds: 5), () {
       Navigator.push(
-          context, MaterialPageRoute(builder: (context) => const HomePage()));
+          context, MaterialPageRoute(builder: (context) => Disease(collectionName: collectionName, firestoreRef: firestoreRef,)));
     });
     super.initState();
   }

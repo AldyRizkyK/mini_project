@@ -1,10 +1,10 @@
 class PlantModel {
   final String id;
   final String nameplant;
-  final String latinName;
+  final String qty;
   PlantModel({
     required this.id,
     required this.nameplant,
-    required this.latinName,
+    required this.qty
   });
 }

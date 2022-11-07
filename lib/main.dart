@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:mini_project/provider/provider.dart';
-import 'package:mini_project/screens/home/home_screen.dart';
-import 'package:mini_project/screens/plant/add_plant_screen.dart';
-import 'package:mini_project/screens/plant/home_page.dart';
+import 'package:mini_project/view_model/provider.dart';
 import 'package:provider/provider.dart';
-import 'constans.dart';
 import 'screens/splash/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 
@@ -24,24 +20,9 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
-            primaryColor: Colors.green,
+            primaryColor: const Color.fromARGB(255, 255, 255, 255),
             useMaterial3: true),
         home: const SplashScreens(),
-        // routes: {
-        //   '/': (context) => const SplashScreens(),
-        //   '/homepage': (context) => const HomePage(),
-        // },
-
-        // return MaterialApp(
-        //   title: 'Flutter Demo',
-        //   debugShowCheckedModeBanner: false,
-        //   theme: ThemeData(
-        //       primaryColor: kPrimaryColor,
-        //       textTheme: Theme.of(context).textTheme.apply(bodyColor: kTextColor),
-        //       visualDensity: VisualDensity.adaptivePlatformDensity,
-        //       useMaterial3: true),
-        //   home: const SplashScreens(),
-        // );
       ),
     );
   }

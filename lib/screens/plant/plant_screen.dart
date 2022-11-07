@@ -1,6 +1,6 @@
 import 'package:mini_project/models/plant_model.dart';
 import 'package:flutter/material.dart';
-import 'package:mini_project/provider/provider.dart';
+import 'package:mini_project/view_model/provider.dart';
 
 class PlantScreen extends StatelessWidget {
   const PlantScreen({
@@ -52,7 +52,7 @@ class PlantScreen extends StatelessWidget {
                       fontSize: 14, fontWeight: FontWeight.w600),
                 ),
                 Text(
-                  item.latinName,
+                  item.qty,
                   style: TextStyle(
                       fontSize: 14, color: Colors.black.withOpacity(0.6)),
                 ),
@@ -61,8 +61,29 @@ class PlantScreen extends StatelessWidget {
           ),
           IconButton(
               onPressed: () {
-                plant.deletePlant(
-                  index,
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: const Text('Hapus Data'),
+                    content: const Text('Yakin untuk menghapus data?'),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: const Text('No'),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          plant.deletePlant(
+                            index,
+                          );
+                          Navigator.pop(context);
+                        },
+                        child: const Text('Yes'),
+                      ),
+                    ],
+                  ),
                 );
               },
               icon: Icon(

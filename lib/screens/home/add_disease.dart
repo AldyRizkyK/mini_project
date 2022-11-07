@@ -5,16 +5,22 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mini_project/screens/home/home_screen.dart';
-import 'package:mini_project/screens/plant/home_page.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+class AddDisease extends StatefulWidget {
+  const AddDisease({
+    Key? key,
+    required this.collectionName,
+    required this.firestoreRef,
+  }) : super(key: key);
+
+  final String collectionName;
+  final FirebaseFirestore firestoreRef;
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<AddDisease> createState() => _AddDiseaseState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _AddDiseaseState extends State<AddDisease> {
   String imageName = "";
   XFile? imagePath;
   final ImagePicker _picker = ImagePicker();
@@ -60,7 +66,7 @@ class _HomeScreenState extends State<HomeScreen> {
           "namapen": namapenController.text,
           'pen': penController.text,
           "image": uploadPath
-        }).then((value) => _showMessage("Record Inserted"));
+        }).then((value) => _showMessage("Data Inserted"));
       } else {
         _showMessage("Something While Uploading Image");
       }
@@ -76,7 +82,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
   _showMessage(String msg) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text(msg),
+      content: Text(
+        msg,
+        style: GoogleFonts.rubik(
+          fontSize: 20,
+          color: Colors.green,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
       duration: const Duration(seconds: 3),
     ));
   }
@@ -85,99 +98,29 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        centerTitle: false,
-        title: const Text('Tambah Penyakit Tanaman'),
-      ),
-      drawer: Drawer(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            const SizedBox(
-              width: 18,
-            ),
-            ListTile(
-              title: Container(
-                padding: const EdgeInsets.all(8.0),
-                decoration: BoxDecoration(
-                  color: Colors.green,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  'Penyakit Tanaman',
-                  style: GoogleFonts.rubik(
-                    fontSize: 25,
-                    color: const Color.fromARGB(255, 50, 59, 46),
-                    fontWeight: FontWeight.w600,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const HomeScreen()),
-                );
-              },
-            ),
-            ListTile(
-              title: Container(
-                padding: const EdgeInsets.all(8.0),
-                decoration: BoxDecoration(
-                  color: Colors.green,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  'Daftar Tanaman',
-                  style: GoogleFonts.rubik(
-                    fontSize: 25,
-                    color: const Color.fromARGB(255, 50, 59, 46),
-                    fontWeight: FontWeight.w600,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const HomePage()),
-                );
-              },
-            ),
-            ListTile(
-              title: Container(
-                padding: const EdgeInsets.all(8.0),
-                decoration: BoxDecoration(
-                  color: Colors.green,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  'List Penyakit',
-                  style: GoogleFonts.rubik(
-                    fontSize: 25,
-                    color: const Color.fromARGB(255, 50, 59, 46),
-                    fontWeight: FontWeight.w600,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => ListDisease(
-                            collectionName: collectionName,
-                            firestoreRef: firestoreRef,
-                          )),
-                );
-              },
-            ),
-            const SizedBox(
-              width: 18,
-            ),
-          ],
+        leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: Colors.black),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => Disease(
+                          collectionName: widget.collectionName,
+                          firestoreRef: widget.firestoreRef,
+                        )),
+              );
+            }),
+        centerTitle: true,
+        title: Text(
+          'Tambah Penyakit Tanaman',
+          style: GoogleFonts.rubik(
+            fontSize: 20,
+            color: const Color.fromARGB(255, 50, 59, 46),
+            fontWeight: FontWeight.w600,
+          ),
         ),
       ),
-      body: SafeArea(
+      body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: _isLoading
@@ -188,11 +131,18 @@ class _HomeScreenState extends State<HomeScreen> {
                     const SizedBox(
                       height: 10,
                     ),
-                    OutlinedButton(
+                    ElevatedButton(
                         onPressed: () {
                           imagePicker();
                         },
-                        child: const Text("Select Image")),
+                        child: Text(
+                          "Select Image",
+                          style: GoogleFonts.rubik(
+                            fontSize: 15,
+                            color: Colors.green,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        )),
                     const SizedBox(
                       height: 10,
                     ),
@@ -231,8 +181,14 @@ class _HomeScreenState extends State<HomeScreen> {
                         onPressed: () {
                           _uploadImage();
                         },
-                        child: const Text("Upload")),
-                    // listdisease(firestoreRef: firestoreRef, collectionName: collectionName),
+                        child: Text(
+                          "Upload",
+                          style: GoogleFonts.rubik(
+                            fontSize: 15,
+                            color: Colors.green,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        )),
                   ],
                 ),
         ),

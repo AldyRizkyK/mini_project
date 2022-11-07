@@ -1,24 +1,25 @@
+import 'package:google_fonts/google_fonts.dart';
 import 'package:mini_project/models/plant_model.dart';
-import 'package:mini_project/provider/provider.dart';
+import 'package:mini_project/view_model/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
-class AddPlantPage extends StatefulWidget {
-  const AddPlantPage({
+class AddPlant extends StatefulWidget {
+  const AddPlant({
     Key? key,
     // required this.onCreate,
   }) : super(key: key);
 
   @override
-  State<AddPlantPage> createState() => _AddPlantPageState();
+  State<AddPlant> createState() => _AddPlantState();
 }
 
-class _AddPlantPageState extends State<AddPlantPage> {
+class _AddPlantState extends State<AddPlant> {
   // final Function(PlantModel) onCreate;
   final formKey = GlobalKey<FormState>();
   final namePlantController = TextEditingController();
-  final latinNameController = TextEditingController();
+  final qtyController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +27,14 @@ class _AddPlantPageState extends State<AddPlantPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add Plant'),
+        title: Text(
+          'Add Plant',
+          style: GoogleFonts.rubik(
+            fontSize: 20,
+            color: const Color.fromARGB(255, 50, 59, 46),
+            fontWeight: FontWeight.w600,
+          ),
+        ),
       ),
       body: Form(
           key: formKey,
@@ -45,7 +53,7 @@ class _AddPlantPageState extends State<AddPlantPage> {
                   ),
                   validator: (value) {
                     if (value!.isEmpty) {
-                      return 'Add Name Properly';
+                      return 'Tambahkan Nama Tanaman';
                     }
                     return null;
                   },
@@ -54,16 +62,17 @@ class _AddPlantPageState extends State<AddPlantPage> {
                   height: 16,
                 ),
                 TextFormField(
-                  controller: latinNameController,
+                  controller: qtyController,
+                  keyboardType: TextInputType.number,
                   decoration: InputDecoration(
                     fillColor: Colors.grey.withOpacity(0.2),
-                    labelText: 'Nama Latin Tanaman',
+                    labelText: 'Jumlah Tanaman Anda',
                     border: const UnderlineInputBorder(),
                     filled: true,
                   ),
                   validator: (value) {
                     if (value!.isEmpty) {
-                      return 'Add Latin Name Properly';
+                      return 'Tambahkan Jumlah';
                     }
                     return null;
                   },
@@ -79,18 +88,25 @@ class _AddPlantPageState extends State<AddPlantPage> {
                         formKey.currentState!.validate();
                       });
                       if (namePlantController.text.isEmpty ||
-                          latinNameController.text.isEmpty) {
+                          qtyController.text.isEmpty) {
                         return;
                       }
                       final plantItem = PlantModel(
                         id: const Uuid().v1(),
                         nameplant: namePlantController.text,
-                        latinName: latinNameController.text,
+                        qty: qtyController.text,
                       );
                       plantProvider.addPlant(plantItem);
                       Navigator.pop(context);
                     },
-                    child: const Text('Add Plant'))
+                    child: Text(
+                      'Add Plant',
+                      style: GoogleFonts.rubik(
+                        fontSize: 15,
+                        color: Colors.green,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ))
               ],
             ),
           )),

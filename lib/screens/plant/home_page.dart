@@ -1,140 +1,92 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:google_fonts/google_fonts.dart';
-import 'package:mini_project/provider/provider.dart';
-import 'package:mini_project/screens/home/add_disease.dart';
-import 'package:mini_project/screens/home/home_screen.dart';
+import 'package:mini_project/widget/drawer_widget.dart';
+import 'package:mini_project/view_model/provider.dart';
 import 'package:mini_project/screens/plant/add_plant_screen.dart';
 import 'package:mini_project/screens/plant/plant_screen.dart';
 import 'package:mini_project/screens/plant/empty_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
-class HomePage extends StatefulWidget {
-  
-
-  const HomePage({super.key});
+class YourPlant extends StatefulWidget {
+  const YourPlant({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<YourPlant> createState() => _YourPlantState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _YourPlantState extends State<YourPlant> {
   FirebaseFirestore firestoreRef = FirebaseFirestore.instance;
 
   FirebaseStorage storageRef = FirebaseStorage.instance;
 
   String collectionName = "Image";
 
+  double turns = 0.0;
+  bool isClicked = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         centerTitle: false,
-        title: const Text('Daftar Tanaman Anda'),
-      ),
-      drawer: Drawer(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            const SizedBox(
-              width: 18,
-            ),
-            ListTile(
-              title: Container(
-                padding: const EdgeInsets.all(8.0),
-                decoration: BoxDecoration(
-                  color: Colors.green,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  'Penyakit Tanaman',
-                  style: GoogleFonts.rubik(
-                    fontSize: 25,
-                    color: const Color.fromARGB(255, 50, 59, 46),
-                    fontWeight: FontWeight.w600,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const HomeScreen()),
-                );
-              },
-            ),
-            ListTile(
-              title: Container(
-                padding: const EdgeInsets.all(8.0),
-                decoration: BoxDecoration(
-                  color: Colors.green,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  'Daftar Tanaman',
-                  style: GoogleFonts.rubik(
-                    fontSize: 25,
-                    color: const Color.fromARGB(255, 50, 59, 46),
-                    fontWeight: FontWeight.w600,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const HomePage()),
-                );
-              },
-            ),
-            ListTile(
-              title: Container(
-                padding: const EdgeInsets.all(8.0),
-                decoration: BoxDecoration(
-                  color: Colors.green,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  'List Penyakit',
-                  style: GoogleFonts.rubik(
-                    fontSize: 25,
-                    color: const Color.fromARGB(255, 50, 59, 46),
-                    fontWeight: FontWeight.w600,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => ListDisease(collectionName: collectionName, firestoreRef: firestoreRef,)),
-                );
-              },
-            ),
-            const SizedBox(
-              width: 18,
-            ),
-          ],
+        title: Text(
+          'Daftar Tanaman Anda',
+          style: GoogleFonts.rubik(
+            fontSize: 20,
+            color: const Color.fromARGB(255, 50, 59, 46),
+            fontWeight: FontWeight.w600,
+          ),
         ),
       ),
+      drawer: DrawerWidget(
+          collectionName: collectionName, firestoreRef: firestoreRef),
       body: buildHomePage(),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // final contactProvider = Provider.of<Contact>(context, listen: false);
-          Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) {
-              return const AddPlantPage(
-                  // onCreate: (task) {
-                  //   contactProvider.addContact(task);
-                  //   Navigator.pop(context);
-                  // },
-                  );
-            },
-          ));
-        },
-        child: const Icon(Icons.add),
+      floatingActionButton: AnimatedRotation(
+        curve: Curves.easeOutExpo,
+        turns: turns,
+        duration: const Duration(seconds: 1),
+        child: FloatingActionButton(
+          onPressed: () async {
+            if (isClicked) {
+              setState(() => turns -= 1 / 4);
+            } else {
+              setState(() => turns += 1 / 4);
+            }
+            isClicked = !isClicked;
+            await Future.delayed(const Duration(milliseconds: 200));
+
+            Navigator.push(
+              context,
+              PageRouteBuilder(
+                transitionDuration: const Duration(seconds: 1),
+                transitionsBuilder: (BuildContext context,
+                    Animation<double> animation,
+                    Animation<double> secAnimation,
+                    Widget child) {
+                  animation = CurvedAnimation(
+                      parent: animation, curve: Curves.elasticIn);
+
+                  return ScaleTransition(
+                      scale: animation,
+                      alignment: Alignment.center,
+                      child: child);
+                },
+                pageBuilder: (BuildContext context, Animation<double> animation,
+                    Animation<double> secAnimation) {
+                  return const AddPlant();
+                },
+              ),
+            );
+          },
+          backgroundColor: Colors.green,
+          child: const Icon(
+            Icons.add,
+          ),
+        ),
       ),
     );
   }
@@ -145,7 +97,7 @@ class _HomePageState extends State<HomePage> {
         if (plant.plants.isNotEmpty) {
           return PlantScreen(plant: plant);
         } else {
-          return const EmptyPage();
+          return const EmptyPlantScreen();
         }
       },
     );
